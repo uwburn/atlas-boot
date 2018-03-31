@@ -7,6 +7,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.introspect.AnnotationIntrospectorPair;
 import com.fasterxml.jackson.databind.introspect.JacksonAnnotationIntrospector;
 import com.fasterxml.jackson.module.jaxb.JaxbAnnotationIntrospector;
+import com.zaxxer.hikari.HikariDataSource;
 import it.mgt.util.json2jpa.Json2JpaFactory;
 import it.mgt.util.spring.config.EntityPackage;
 import it.mgt.util.spring.config.EntityPackageAwareConfiguration;
@@ -43,18 +44,16 @@ import it.mgt.util.spring.meta.ProjectMetaSvc;
 @EnableTransactionManagement
 @EnableScheduling
 @EnableAsync
-@Import({JndiDataConfig.class})
 @PropertySources({
+    @PropertySource("classpath:datasource.properties"),
     @PropertySource("classpath:jpa.properties"),
     @PropertySource("classpath:atlas.properties")})
 @EntityPackage("it.mgt.atlas.entity")
 public class BaseContext extends EntityPackageAwareConfiguration {
-    
-    @Autowired
-    private DataSource dataSource;
 
     @Autowired
     private Environment env;
+
 
     @Bean
     public static PropertySourcesPlaceholderConfigurer propertySourcesPlaceholderConfigurer() {
@@ -80,6 +79,16 @@ public class BaseContext extends EntityPackageAwareConfiguration {
     }
 
     @Bean
+    public DataSource dataSource() {
+        HikariDataSource ds = new HikariDataSource();
+        ds.setDriverClassName(env.getProperty("it.mgt.atlas.datasource.driver-class-name"));
+        ds.setJdbcUrl(env.getProperty("it.mgt.atlas.datasource.url"));
+        ds.setUsername(env.getProperty("it.mgt.atlas.datasource.username"));
+        ds.setPassword(env.getProperty("it.mgt.atlas.datasource.password"));
+        return ds;
+    }
+
+    @Bean
     public JpaVendorAdapter jpaVendorAdapter() {
         return new HibernateJpaVendorAdapter();
     }
@@ -87,7 +96,7 @@ public class BaseContext extends EntityPackageAwareConfiguration {
     @Bean
     public LocalContainerEntityManagerFactoryBean entityManagerFactory() {
         LocalContainerEntityManagerFactoryBean em = new LocalContainerEntityManagerFactoryBean();
-        em.setDataSource(dataSource);
+        em.setDataSource(dataSource());
         em.setPackagesToScan(getEntityPackages());
         em.setJpaVendorAdapter(jpaVendorAdapter());
         em.getJpaPropertyMap().put("hibernate.hbm2ddl.auto", env.getProperty("it.mgt.atlas.hibernate.hbm2ddl.auto"));
