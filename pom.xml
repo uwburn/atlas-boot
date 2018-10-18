@@ -22,7 +22,7 @@
         <dependency>
             <groupId>it.mgt.util</groupId>
             <artifactId>json2jpa</artifactId>
-            <version>1.1.9</version>
+            <version>1.1.10</version>
         </dependency>
         <dependency>
             <groupId>it.mgt.util</groupId>
@@ -32,7 +32,7 @@
         <dependency>
             <groupId>it.mgt.util</groupId>
             <artifactId>spring</artifactId>
-            <version>1.1.4</version>
+            <version>1.1.5</version>
         </dependency>
         <dependency>
             <groupId>it.mgt.util</groupId>
