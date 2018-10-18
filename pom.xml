@@ -5,7 +5,7 @@
     <name>atlas-boot</name>
     <groupId>it.mgt.archetype</groupId>
     <artifactId>atlas-boot</artifactId>
-    <version>1.2.3</version>
+    <version>1.2.4</version>
 	
 	<parent>
         <groupId>org.springframework.boot</groupId>
